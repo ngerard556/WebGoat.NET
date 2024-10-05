@@ -11,13 +11,27 @@ namespace OWASP.WebGoat.NET.App_Code
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         
+        private static string SanitizeArgs(string args)
+        {
+            // Allow only alphanumeric characters and a few special characters
+            char[] allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._".ToCharArray();
+            foreach (char c in args)
+            {
+                if (Array.IndexOf(allowedChars, c) == -1)
+                {
+                    throw new ArgumentException("Invalid character in arguments");
+                }
+            }
+            return args;
+        }
+        
         public static int RunProcessWithInput(string cmd, string args, string input)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 WorkingDirectory = Settings.RootDir,
                 FileName = cmd,
-                Arguments = args,
+                Arguments = SanitizeArgs(args),
                 UseShellExecute = false,
                 RedirectStandardInput = true,
                 RedirectStandardError = true,
