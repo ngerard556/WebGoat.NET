@@ -13,6 +13,16 @@ namespace OWASP.WebGoat.NET.App_Code
         
         public static int RunProcessWithInput(string cmd, string args, string input)
         {
+            // Define a list of allowed commands
+            string[] allowedCommands = { "allowedCommand1", "allowedCommand2", "allowedCommand3" };
+
+            // Check if the cmd is in the list of allowed commands
+            if (!Array.Exists(allowedCommands, element => element == cmd))
+            {
+                log.Error("Attempt to run an unauthorized command: " + cmd);
+                return -1; // Return an error code
+            }
+
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 WorkingDirectory = Settings.RootDir,
